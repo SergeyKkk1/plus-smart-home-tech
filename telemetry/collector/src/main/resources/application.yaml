@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: collector
+  mvc:
+    async:
+      request-timeout: 35s
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: ru.yandex.practicum.kafka.telemetry.serializer.AvroSerializer
+      acks: all
+      batch-size: 32768
+      buffer-memory: 33554432
+      compression-type: lz4
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        linger.ms: 5
+        max.block.ms: 1000
+        request.timeout.ms: 10000
+        delivery.timeout.ms: 30000
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+collector:
+  kafka:
+    topics:
+      sensors: telemetry.sensors.v1
+      hubs: telemetry.hubs.v1
