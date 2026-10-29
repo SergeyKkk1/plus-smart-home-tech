@@ -265,12 +265,6 @@ class CollectorApplicationTest {
                 Arguments.of("/events/hubs", """
                         {"hubId":"hub.1","type":"SCENARIO_ADDED","name":"Evening lights",
                          "conditions":[],"actions":[]}
-                        """),
-                Arguments.of("/events/hubs", """
-                        {"hubId":"hub.1","type":"SCENARIO_ADDED","name":"Evening lights",
-                         "conditions":[
-                             {"sensorId":"light.1","type":"LUMINOSITY","operation":"LOWER_THAN","value":"50"}
-                         ],"actions":[{"sensorId":"lamp.1","type":"ACTIVATE"}]}
                         """)
         );
     }

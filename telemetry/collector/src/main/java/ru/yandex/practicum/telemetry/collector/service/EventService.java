@@ -24,15 +24,20 @@ public class EventService {
     private final KafkaTopics topics;
 
     public CompletableFuture<Void> collect(SensorEvent event) {
+        log.info("Collecting sensor event {} from sensor {} for hub {} at {}",
+                event.getType(), event.getId(), event.getHubId(), event.getTimestamp());
         return publish(topics.sensors(), event.getHubId(), event.getTimestamp(), mapper.map(event));
     }
 
     public CompletableFuture<Void> collect(HubEvent event) {
+        log.info("Collecting hub event {} for hub {} at {}",
+                event.getType(), event.getHubId(), event.getTimestamp());
         return publish(topics.hubs(), event.getHubId(), event.getTimestamp(), mapper.map(event));
     }
 
     private CompletableFuture<Void> publish(String topic, String hubId, Instant timestamp,
                                             SpecificRecordBase event) {
+        log.info("Publishing event to {} for hub {} at {}", topic, hubId, timestamp);
         ProducerRecord<String, SpecificRecordBase> record =
                 new ProducerRecord<>(topic, null, timestamp.toEpochMilli(), hubId, event);
         try {
@@ -40,6 +45,7 @@ public class EventService {
                 if (failure != null) {
                     throw publishingFailure(topic, hubId, failure);
                 }
+                log.info("Published event to {} for hub {} at {}", topic, hubId, timestamp);
                 return null;
             });
         } catch (RuntimeException failure) {
